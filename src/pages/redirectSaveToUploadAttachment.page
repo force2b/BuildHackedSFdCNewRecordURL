@@ -1,0 +1,15 @@
+<!-- *****************************************************************************
+* VF Page: redirectSaveToUploadAttachment
+* - Written by Michael Smith, Force2b, LLC. 2015-01-05
+* -
+* Purpose:
+* - When called from a saveURL parameter (on a custom button_, this redirects 
+*	the user to the Upload Attachment page for the relevant object.
+* - Basically it's a step saver for the user so they don't have to wait for the
+*	page to reload and then click the Add Attachment button.
+*
+* Modifications:  
+*
+******************************************************************************** -->
+<apex:page showHeader="false" 
+	action="/p/attach/NoteAttach?pid={!$currentPage.parameters.newId}&parentname={!$currentPage.parameters.objName}&retURL={!IF($currentPage.parameters.retURL != null, $currentPage.parameters.retURL, $currentPage.parameters.newId)}" />

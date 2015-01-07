@@ -1,0 +1,58 @@
+<!-- *****************************************************************************
+* VF Page: GenerateNewChildRecordURL
+* - Written by Michael Smith, Force2b, LLC. 2015-01-05
+* -
+* Purpose:
+* - Used by custom buttons NEW on various child objects to do two things:
+*	a. Auto-Fill some of the custom fields on the new record from values on the Parent.
+*		This uses some custom code and the metadata API to build the URL
+*	b. Redirect the user to the Attach New File page automatically upon saving.
+*
+*	// Passing uploadFile=1 tells the URL to include a destination to redirectSaveTouploadAttachment
+*	// Pass all fields to defaults as "parmFieldN" with values of FieldName^Value[^LkUpName]
+*	
+*	/apex/GenerateNewChildRecordURL?Id={!Contact.Id}
+*	&Name={!Contact.name}
+*	&targetObjectName=SomeObjectName__c
+*	&uploadFile=1
+*	&parmField1=Student__c^{!Contact.Name}^lkName
+*	&parmField2=Student__c^{!Contact.Id}^lkid
+*	&parmField3=School__c^{!Contact.Current_Enrolled_SchoolId__c}^lkid
+*	&parmField4=School__c^{!Contact.Current_Enrolled_School__c}^lkName
+*	&parmField5=Year__c^{!IF(MONTH(TODAY()) &gt;= 8, TEXT(YEAR(TODAY())) + &quot;-&quot; + TEXT(YEAR(TODAY())+1), TEXT(YEAR(TODAY())-1) + &quot;-&quot; + TEXT(YEAR(TODAY())))}
+*
+* Modifications:  
+*
+******************************************************************************** -->
+<apex:page showHeader="true" sidebar="false" readOnly="true" standardStylesheets="false"
+	controller="GenerateNewChildRecordURLController">
+
+<div style="text-align: center;font-weight: bold;padding-top:50px">
+	Generating Target URL .... Please Wait
+</div>
+
+<c:FieldIdByObjectFromMetadata useLowerCaseKeys="True" />
+
+<apex:pageMessages id="msgs" />
+
+<apex:form>
+	<apex:actionFunction name="generateTargetURL" immediate="true" 
+			action="{!generateTargetURLApex}" reRender="msgs" >
+		<apex:param name="fieldIds" assignTo="{!customFieldIdsJSON}" value="" />
+	</apex:actionFunction>
+</apex:form>
+
+<script type = "text/javascript">
+	
+	var objectName = "{! $currentPage.parameters.targetObjectName }";
+
+	// Use the metadata API to retrieve the custom object field ID's and then
+	// pass this into the Apex Controller (using ActionFunction) to generate 
+	// a target URl to redirect the user to
+	mdapi_retrieveCustomFieldIdsForAnObject(objectName, function() { 
+		generateTargetURL( JSON.stringify(mdapi_customFieldIds) );
+	});
+
+</script>
+	
+</apex:page>
