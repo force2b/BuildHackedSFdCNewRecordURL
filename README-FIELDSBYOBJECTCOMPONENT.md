@@ -1,7 +1,9 @@
-# BuildHackedSFdCNewRecordURL
+# FieldIdByObjectFromMetadata VF Component
 
 ## Purpose 
-VisualForce and Apex to build a custom New Record URL from a custom button while easily passing in default field values on the target object.
+VisualForce Component that uses the metadata toolip API to retrieve all Custom Field ID's for the specified object. Results are stored in 3 global vars:
+* mdapi_customFieldIds[] -- key is object.fieldname__c
+* * 
 
 ## Usage Example 1:
 Simple example using JS only to retrieve field ID's only in JS and using jQuery to apply to a link
