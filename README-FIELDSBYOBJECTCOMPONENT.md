@@ -1,9 +1,10 @@
 # FieldIdByObjectFromMetadata VF Component
 
 ## Purpose 
-VisualForce Component that uses the metadata toolip API to retrieve all Custom Field ID's for the specified object. Results are stored in 3 global vars:
+VisualForce Component that uses the metadata toolip API to retrieve all Custom Field ID's for the specified object. Results are stored in a global var that is fully populated after the asynchronous calls have completed:
 * mdapi_customFieldIds[] -- key is object.fieldname__c
-* * 
+
+Use useLowerCaseKeys="true" on the apex component tag to force the mdapi_customFieldIds to be fully lower case. Otherwise, the Object and Field Names are in the same case as in Salesforce - meaning that ThisField__c is different from Thisfield__c.
 
 ## Usage Example 1:
 Simple example using JS only to retrieve field ID's only in JS and using jQuery to apply to a link
