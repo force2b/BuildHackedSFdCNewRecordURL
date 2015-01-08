@@ -9,6 +9,7 @@
 * -- &uploadFile=1 				Redirect the user to the upload new file page
 * -- &returnToNewRecord=1 		Don't redirect the user back to the parent record after saving
 * -- &redirectHere=/apex/...	Redirect the user to this page after saving
+* -- &recordTypeName= 			RecordType.DeveloperName value (skips RT page)
 *
 * Modifications:  
 *
@@ -20,9 +21,19 @@ public without sharing class GenerateNewChildRecordURLController {
 
 	// Public class vars
 	public String customFieldIdsJSON	{ get; set; }
+	public String newrecordURL 			{ get; set; }
 
 	public Map<String, String> customFieldIds;
 	public String targetObjectName;
+
+/*&Name={!Contact.name}
+&targetObjectName=SomeObjectName__c
+&uploadFile=1
+&parmField1=Student__c^{!Contact.Name}^lkName
+&parmField2=Student__c^{!Contact.Id}^lkid
+&parmField3=School__c^{!Contact.Current_Enrolled_SchoolId__c}^lkid
+&parmField4=School__c^{!Contact.Current_Enrolled_School__c}^lkName
+&parmField5=Year__c^{!IF(MONTH(TODAY()) &gt;= 8, TEXT(YEAR(TODAY())) + &quot;-&quot; + TEXT(YEAR(TODAY())+1), TEXT(YEAR(TODAY())-1) + &quot;-&quot; + TEXT(YEAR(TODAY())))}*/
 
 	// Method called by an ActionFunction on the VF page to generate the URL and redirect the user
 	public pageReference generateTargetURLApex() {
@@ -42,6 +53,7 @@ public without sharing class GenerateNewChildRecordURLController {
 			String parentRecordId = urlParms.get('Id');
 			String parentRecordName = urlParms.get('Name');
 			String redirectHere = urlParms.get('redirectHere');
+			String recordTypeName = urlParms.get('recordTypeName');
 			Boolean returnToNewRecord = (urlParms.get('returnToNewRecord') == '1');
 			Boolean redirectToUploadFile = (urlParms.get('uploadFile') == '1');
 			
@@ -69,7 +81,23 @@ public without sharing class GenerateNewChildRecordURLController {
 				return null;
 			}
 
-			pageReference pg = new PageReference('/' + objectType.getDescribe().getKeyPrefix() + '/e');
+			String recordTypeId;
+			if (recordTypeName != null) {
+				try {
+					RecordType rt = [SELECT ID From RecordType 
+						WHERE SObjectType = :targetObjectName AND DeveloperName = :recordTypeName LIMIT 1];
+					recordTypeId = rt.Id;
+				} catch (exception ex) { }
+			}
+
+			// If a New Record URL is passed use that, otherwise generate it automatically
+			// In addition, if a RecordType.DeveloperName value has been passed, 
+			// manually create the new record URL and pre-populate the record type Id
+			if (this.newrecordURL == null || recordTypeId != null) {
+				newrecordURL = '/' + objectType.getDescribe().getKeyPrefix() + '/e';
+			}
+
+			pageReference pg = new PageReference(this.newrecordURL);
 			pg.getParameters().put('retURL', '/' + parentRecordId);
 			if (redirectToUploadFile == false && !returnToNewRecord && redirectHere == null) {
 				pg.getParameters().put('saveURL', '/' + parentRecordId);
@@ -90,6 +118,11 @@ public without sharing class GenerateNewChildRecordURLController {
 				if (df.fieldId != null) {
 					pg.getParameters().put(df.fieldId, df.value);
 				}
+			}
+
+			if (recordTypeId != null) {
+				pg.getParameters().put('RecordType', recordTypeId);
+				pg.getParameters().put('ent', this.targetObjectName);
 			}
 			
 			return pg;

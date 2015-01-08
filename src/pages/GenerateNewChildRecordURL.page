@@ -14,7 +14,8 @@
 *	/apex/GenerateNewChildRecordURL?Id={!Contact.Id}
 *	&Name={!Contact.name}
 *	&targetObjectName=SomeObjectName__c
-*	&uploadFile=1
+*	[&RecordTypeName=RecordType.DeveloperNameToUse]
+*	[&uploadFile=1]
 *	&parmField1=Student__c^{!Contact.Name}^lkName
 *	&parmField2=Student__c^{!Contact.Id}^lkid
 *	&parmField3=School__c^{!Contact.Current_Enrolled_SchoolId__c}^lkid
@@ -39,6 +40,7 @@
 	<apex:actionFunction name="generateTargetURL" immediate="true" 
 			action="{!generateTargetURLApex}" reRender="msgs" >
 		<apex:param name="fieldIds" assignTo="{!customFieldIdsJSON}" value="" />
+		<apex:param name="newrecordURL" assignTo="{!newrecordURL}" value="" />
 	</apex:actionFunction>
 </apex:form>
 
@@ -50,7 +52,8 @@
 	// pass this into the Apex Controller (using ActionFunction) to generate 
 	// a target URl to redirect the user to
 	mdapi_retrieveCustomFieldIdsForAnObject(objectName, function() { 
-		generateTargetURL( JSON.stringify(mdapi_customFieldIds) );
+		generateTargetURL( JSON.stringify(mdapi_customFieldIds), 
+			"{! IF($currentPage.parameters.targetObjectName != null, URLFOR($Action[$currentPage.parameters.targetObjectName].New, null), '')}" );
 	});
 
 </script>
