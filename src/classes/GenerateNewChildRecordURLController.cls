@@ -24,15 +24,6 @@ public without sharing class GenerateNewChildRecordURLController {
 	public Map<String, String> customFieldIds;
 	public String targetObjectName;
 
-/*&Name={!Contact.name}
-&targetObjectName=SomeObjectName__c
-&uploadFile=1
-&parmField1=Student__c^{!Contact.Name}^lkName
-&parmField2=Student__c^{!Contact.Id}^lkid
-&parmField3=School__c^{!Contact.Current_Enrolled_SchoolId__c}^lkid
-&parmField4=School__c^{!Contact.Current_Enrolled_School__c}^lkName
-&parmField5=Year__c^{!IF(MONTH(TODAY()) &gt;= 8, TEXT(YEAR(TODAY())) + &quot;-&quot; + TEXT(YEAR(TODAY())+1), TEXT(YEAR(TODAY())-1) + &quot;-&quot; + TEXT(YEAR(TODAY())))}*/
-
 	// Method called by an ActionFunction on the VF page to generate the URL and redirect the user
 	public pageReference generateTargetURLApex() {
 		if (this.customFieldIdsJSON != null) {
