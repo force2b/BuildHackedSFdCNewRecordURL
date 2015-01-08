@@ -20,3 +20,4 @@ The button URL below can create a new record for SomeObjectName__c, setting defa
 * &uploadFile=1 -- When passed to the GenerateNewChildRecordURL page, this will redirect the user to the "Attach a File" page for the newly created record
 * &returnToNewRecord=1 -- The GenerateNewChildRecordURL page returns to the parent record by default. This parameter tells the page to stay on the new record.
 * &redirectHere= -- When passed with a valid URL, and if returnToNewRecord is not set to 1, this will redirect the user to this page after saving the new record.
+* &recordTypeName= -- When passed with a valid RecordType.DeveloperName value this will skip the record type propmt and create a record of the passed record type
